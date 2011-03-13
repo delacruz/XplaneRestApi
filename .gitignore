@@ -1,0 +1,47 @@
+# git ls-files --others --exclude-from=.git/info/exclude
+# Lines that start with '#' are comments.
+# For a project mostly in C, the following would be a good set of
+# exclude patterns (uncomment them if you want to use them):
+# *.[oa]
+# *~
+
+# Windows image file caches
+Thumbs.db 
+
+# Folder config file
+Desktop.ini
+
+# ReSharper meta directory
+_ReSharper*
+
+# Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
+bin
+obj
+Debug
+Release
+ipch
+
+# user settings
+*.user
+*.suo
+
+# if you have pictures, windows will likely create those annoying index files
+Thumbs.db
+
+# mstest test results
+TestResults
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+*.sdf
