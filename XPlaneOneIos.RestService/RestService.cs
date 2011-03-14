@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ServiceModel;
 using System.Threading;
+using log4net;
 using XplaneServices.SharedMemory;
 
 namespace XplaneServices
@@ -8,6 +9,7 @@ namespace XplaneServices
     [ServiceBehavior(AddressFilterMode = AddressFilterMode.Any, InstanceContextMode = InstanceContextMode.Single)]
     public class RestService : IRestService
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(RestService));
         private readonly AutoResetEvent _signal = new AutoResetEvent(false);
         private XPlanePluginIcd.DynamicQuery _response;
         readonly SharedMemoryStruct<XPlanePluginIcd.DynamicQuery> _sharedMemoryCommand = new SharedMemoryStruct<XPlanePluginIcd.DynamicQuery>("SHAREDMEM_COMMAND");
@@ -19,6 +21,7 @@ namespace XplaneServices
         public RestService()
         {
             _sharedMemoryResponse.DataReceived += SharedMemoryResponseDataReceived;
+            Log.Info("Started Service.");
         }
 
         /// <summary>
