@@ -78,10 +78,9 @@ namespace XplaneServices
         /// </summary>
         /// <param name="dataRef">The data ref.</param>
         /// <returns></returns>
-        public KeyValuePair<string, int> ReadInt(string dataRef)
+        public int ReadInt(string dataRef)
         {
-            var value = ReadData(dataRef, XPlanePluginIcd.DataRefDataType.IntVal);
-            return new KeyValuePair<string, int>(dataRef, value);
+            return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.IntVal);
         }
 
         /// <summary>
