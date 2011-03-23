@@ -15,7 +15,7 @@ namespace XplaneServices.SharedMemory
 
         protected override void Dispose(bool disposing)
         {
-            global::XplaneServices.SharedMemory.SharedMemory.UnmapViewOfFile(_ptr);
+            SharedMemory.UnmapViewOfFile(_ptr);
             _ptr = IntPtr.Zero;
             base.Dispose(disposing);
         }

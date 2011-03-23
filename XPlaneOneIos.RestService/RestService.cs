@@ -6,6 +6,9 @@ using XplaneServices.SharedMemory;
 
 namespace XplaneServices
 {
+    /// <summary>
+    /// Implementation of the IRestService interface.
+    /// </summary>
     [ServiceBehavior(AddressFilterMode = AddressFilterMode.Any, InstanceContextMode = InstanceContextMode.Single)]
     public class RestService : IRestService
     {
@@ -40,7 +43,7 @@ namespace XplaneServices
         /// </summary>
         /// <param name="dataRef">The data ref.</param>
         /// <param name="dataRefDataType">Type of the data ref data.</param>
-        /// <returns></returns>
+        /// <returns>The dynamically typed dataref value.</returns>
         private dynamic ReadData(string dataRef, XPlanePluginIcd.DataRefDataType dataRefDataType)
         {
             _sharedMemoryCommand.Write(new XPlanePluginIcd.DynamicQuery
@@ -77,7 +80,7 @@ namespace XplaneServices
         /// Reads the int.
         /// </summary>
         /// <param name="dataRef">The data ref.</param>
-        /// <returns></returns>
+        /// <returns>int value</returns>
         public int ReadInt(string dataRef)
         {
             return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.IntVal);
@@ -87,22 +90,20 @@ namespace XplaneServices
         /// Reads the float.
         /// </summary>
         /// <param name="dataRef">The data ref.</param>
-        /// <returns></returns>
-        public KeyValuePair<string, float> ReadFloat(string dataRef)
+        /// <returns>float value</returns>
+        public float ReadFloat(string dataRef)
         {
-            var value = ReadData(dataRef, XPlanePluginIcd.DataRefDataType.FloatVal);
-            return new KeyValuePair<string, float>(dataRef, value);
+            return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.FloatVal);
         }
 
         /// <summary>
         /// Reads the double.
         /// </summary>
         /// <param name="dataRef">The data ref.</param>
-        /// <returns></returns>
-        public KeyValuePair<string, double> ReadDouble(string dataRef)
+        /// <returns>double value</returns>
+        public double ReadDouble(string dataRef)
         {
-            var value = ReadData(dataRef, XPlanePluginIcd.DataRefDataType.DoubleVal);
-            return new KeyValuePair<string, double>(dataRef, value);
+            return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.DoubleVal);
         }
 
         /// <summary>
@@ -174,9 +175,9 @@ namespace XplaneServices
                 DataRef = dataRef,
                 DataType = dataRefDataType,
                 QueryType = XPlanePluginIcd.XplaneQueryType.Write,
-                IntValue = newValue,
-                FloatValue = newValue,
-                DoubleValue = newValue
+                IntValue = (int)newValue,
+                FloatValue = (float)newValue,
+                DoubleValue = (double)newValue
             };
             _sharedMemoryCommand.Write(query);
         }
