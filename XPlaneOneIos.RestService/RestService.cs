@@ -25,6 +25,20 @@ namespace XplaneServices
         {
             _sharedMemoryResponse.DataReceived += SharedMemoryResponseDataReceived;
             Log.Info("Started Service.");
+            var query = new XPlanePluginIcd.DynamicQuery
+                            {
+                                DataRef = "my/data/ref/rocks",
+                                DataType = XPlanePluginIcd.DataRefDataType.FloatVal,
+                                QueryType = XPlanePluginIcd.XplaneQueryType.Response,
+                                values = new XPlanePluginIcd.DataRefValueUnion
+                                               {
+                                                   IntValues = new int[255]
+                                               }
+                            };
+
+            query.values.IntValues[0] = 2147483647;
+
+            _sharedMemoryCommand.Write(query);
         }
 
         /// <summary>
@@ -60,15 +74,15 @@ namespace XplaneServices
                 switch (dataRefDataType)
                 {
                     case XPlanePluginIcd.DataRefDataType.IntVal:
-                        return _response.IntValue;
+                        return _response.values.IntValues;
                     case XPlanePluginIcd.DataRefDataType.FloatVal:
-                        return _response.FloatValue;
+                        return _response.values.FloatValues;
                     case XPlanePluginIcd.DataRefDataType.DoubleVal:
-                        return _response.DoubleValue;
+                        return _response.values.DoubleValue;
                     default:
                         break;
                 }
-                return _response.IntValue;
+                return _response.values.IntValues;
             }
             else
             {
@@ -154,7 +168,7 @@ namespace XplaneServices
 
             if (didRespond)
             {
-                return _response.IntValue;
+                return _response.values.IntValues;
             }
             else
             {
@@ -171,14 +185,22 @@ namespace XplaneServices
         public void WriteDataRef(string dataRef, dynamic newValue, XPlanePluginIcd.DataRefDataType dataRefDataType)
         {
             var query = new XPlanePluginIcd.DynamicQuery
-            {
-                DataRef = dataRef,
-                DataType = dataRefDataType,
-                QueryType = XPlanePluginIcd.XplaneQueryType.Write,
-                IntValue = (int)newValue,
-                FloatValue = (float)newValue,
-                DoubleValue = (double)newValue
-            };
+                            {
+                                values = new XPlanePluginIcd.DataRefValueUnion
+                                             {
+                                                 IntValues = new int[255],
+                                                FloatValues = new float[255]
+                                             },
+                                DataRef = dataRef,
+                                DataType = dataRefDataType,
+                                QueryType = XPlanePluginIcd.XplaneQueryType.Write
+                            };
+
+
+            query.values.IntValues[0] = (int) newValue;
+            query.values.FloatValues[0] = (float)newValue;
+            query.values.DoubleValue[0] = (double)newValue;
+
             _sharedMemoryCommand.Write(query);
         }
 

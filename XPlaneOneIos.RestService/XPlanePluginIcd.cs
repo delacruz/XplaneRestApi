@@ -39,9 +39,22 @@ namespace XplaneServices
             public string DataRef;
             public DataRefDataType DataType;
             public XplaneQueryType QueryType;
-            public int IntValue;
-            public float FloatValue;
-            public double DoubleValue;
+            public byte ValueCount;
+            public DataRefValueUnion values;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        public struct DataRefValueUnion
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 255)]
+            [FieldOffset(0)]
+            public int[] IntValues;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 255)]
+            [FieldOffset(0)]
+            public float[] FloatValues;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
+            [FieldOffset(0)]
+            public double[] DoubleValue;
         }
 
     }

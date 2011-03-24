@@ -35,9 +35,12 @@ typedef struct XplaneQuery
 	char DataRefName[128];
 	char DataRefType;
 	char QueryType;
-	int IntValue;
-	float FloatValue;
-	double DoubleValue;
+	char ValueCount;
+	union{
+		int IntValue;
+		float FloatValue;
+		double DoubleValue;
+	} values[255];
 } QUERY;
 
 BOOL CreateSharedMemorySpace(void);
@@ -117,13 +120,13 @@ DWORD WINAPI HandleIncomingCommands(LPVOID lpParam)
 				switch(newCommand.DataRefType)
 				{
 				case INTVAL:
-					response.IntValue = XPLMGetDatai(dataRef);
+					response.values->IntValue = XPLMGetDatai(dataRef);
 					break;
 				case FLOATVAL:
-					response.FloatValue = XPLMGetDataf(dataRef);
+					response.values->FloatValue = XPLMGetDataf(dataRef);
 					break;
 				case DOUBLEVAL:
-					response.DoubleValue = XPLMGetDatad(dataRef);
+					response.values->DoubleValue = XPLMGetDatad(dataRef);
 					break;
 				default: 
 					break;
@@ -135,13 +138,13 @@ DWORD WINAPI HandleIncomingCommands(LPVOID lpParam)
 				switch(newCommand.DataRefType)
 				{
 				case INTVAL:
-					XPLMSetDatai(XPLMFindDataRef(newCommand.DataRefName), newCommand.IntValue);
+					XPLMSetDatai(XPLMFindDataRef(newCommand.DataRefName), newCommand.values->IntValue);
 					break;
 				case FLOATVAL:
-					XPLMSetDataf(XPLMFindDataRef(newCommand.DataRefName), newCommand.FloatValue);
+					XPLMSetDataf(XPLMFindDataRef(newCommand.DataRefName), newCommand.values->FloatValue);
 					break;
 				case DOUBLEVAL:
-					XPLMSetDatad(XPLMFindDataRef(newCommand.DataRefName), newCommand.DoubleValue);
+					XPLMSetDatad(XPLMFindDataRef(newCommand.DataRefName), newCommand.values->DoubleValue);
 					break;
 				default: 
 					break;
@@ -189,3 +192,4 @@ PLUGIN_API void	XPluginStop(void)
 	UnmapViewOfFile(gLpvCommandMem);
 	CloseHandle(gHMapObjectCommand);
 }             
+
