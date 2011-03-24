@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using System.Threading;
 using log4net;
 using XplaneServices.SharedMemory;
+using System.Linq;
 
 namespace XplaneServices
 {
@@ -25,22 +27,21 @@ namespace XplaneServices
         {
             _sharedMemoryResponse.DataReceived += SharedMemoryResponseDataReceived;
             Log.Info("Started Service.");
-            var query = new XPlanePluginIcd.DynamicQuery
-                            {
-                                DataRef = "sim/time/sim_speed",
-                                DataType = XPlanePluginIcd.DataRefDataType.IntVal,
-                                QueryType = XPlanePluginIcd.XplaneQueryType.Write,
-                                values = new XPlanePluginIcd.DataRefValueUnion
-                                             {
-                                                 IntValues = new int[255],
-                                                 FloatValues = new float[255],
-                                                 DoubleValue = new double[1]
-                                             }
-                            };
+            //var query = new XPlanePluginIcd.DynamicQuery
+            //                {
+            //                    DataRef = "sim/time/sim_speed",
+            //                    DataType = XPlanePluginIcd.DataRefDataType.IntVal,
+            //                    QueryType = XPlanePluginIcd.XplaneQueryType.Write,
+            //                    //Values = new XPlanePluginIcd.DataRefValueUnion[255]
+            //                    IntValues = new int[255],
+            //                    FloatValues = new float[255],
+            //                    DoubleValues = new double[255]
+            //                };
 
-            query.values.IntValues[0] = 1;
+            //query.IntValues[0] = 1;
 
-            _sharedMemoryCommand.Write(query);
+            //_sharedMemoryCommand.Write(query);
+
         }
 
         /// <summary>
@@ -54,19 +55,21 @@ namespace XplaneServices
             _signal.Set();
         }
 
-        /// <summary>
-        /// Reads the data.
-        /// </summary>
-        /// <param name="dataRef">The data ref.</param>
-        /// <param name="dataRefDataType">Type of the data ref data.</param>
-        /// <returns>The dynamically typed dataref value.</returns>
-        private dynamic ReadData(string dataRef, XPlanePluginIcd.DataRefDataType dataRefDataType)
+
+        private dynamic ReadData(string dataRef, XPlanePluginIcd.DataRefDataType dataRefDataType, int valueCount)
         {
             _sharedMemoryCommand.Write(new XPlanePluginIcd.DynamicQuery
             {
                 DataRef = dataRef,
                 DataType = dataRefDataType,
-                QueryType = XPlanePluginIcd.XplaneQueryType.Read
+                QueryType = XPlanePluginIcd.XplaneQueryType.Read,
+                ValueCount = (byte)valueCount,
+                //values = new XPlanePluginIcd.DataRefValueUnion
+                //             {
+                //                 IntValue = new int[255],
+                //                 //FloatValues = new float[255],
+                //                 //DoubleValues = new double[255]
+                //             }
             });
 
             var didRespond = _signal.WaitOne(2000);
@@ -76,19 +79,19 @@ namespace XplaneServices
                 switch (dataRefDataType)
                 {
                     case XPlanePluginIcd.DataRefDataType.IntVal:
-                        return _response.values.IntValues;
+                        return _response.IntValues;
                     case XPlanePluginIcd.DataRefDataType.FloatVal:
-                        return _response.values.FloatValues;
+                        return _response.FloatValues;
                     case XPlanePluginIcd.DataRefDataType.DoubleVal:
-                        return _response.values.DoubleValue;
+                        return _response.DoubleValues;
                     default:
                         break;
                 }
-                return _response.values.IntValues;
+                return _response.IntValues[0];
             }
             else
             {
-                return -999;
+                return new [] {-999};
             }
         }
 
@@ -99,7 +102,14 @@ namespace XplaneServices
         /// <returns>int value</returns>
         public int ReadInt(string dataRef)
         {
-            return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.IntVal);
+            return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.IntVal, 1);
+        }
+
+        public int[] ReadInts(string dataRef, int valueCount)
+        {
+            return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.IntVal, valueCount);
+            //int[] valuesAsIntegers = Array.ConvertAll(unionValues, new Converter<XPlanePluginIcd.DataRefValueUnion, int>(DataRefValueUnionToInt));
+            //return valuesAsIntegers.Take(valueCount).ToArray();
         }
 
         /// <summary>
@@ -109,7 +119,7 @@ namespace XplaneServices
         /// <returns>float value</returns>
         public float ReadFloat(string dataRef)
         {
-            return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.FloatVal);
+            return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.FloatVal, 1);
         }
 
         /// <summary>
@@ -119,7 +129,7 @@ namespace XplaneServices
         /// <returns>double value</returns>
         public double ReadDouble(string dataRef)
         {
-            return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.DoubleVal);
+            return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.DoubleVal, 1);
         }
 
         /// <summary>
@@ -170,7 +180,7 @@ namespace XplaneServices
 
             if (didRespond)
             {
-                return _response.values.IntValues;
+                return _response.IntValues;
             }
             else
             {
@@ -199,13 +209,29 @@ namespace XplaneServices
                             };
 
 
-            query.values.IntValues[0] = (int) newValue;
-            query.values.FloatValues[0] = (float)newValue;
-            query.values.DoubleValue[0] = (double)newValue;
+            query.IntValues[0] = (int) newValue;
+            query.FloatValues[0] = (float)newValue;
+            query.DoubleValues[0] = (double)newValue;
 
             _sharedMemoryCommand.Write(query);
         }
 
-   
+        //public static int DataRefValueUnionToInt(XPlanePluginIcd.DataRefValueUnion union)
+        //{
+        //    return union.IntValue;
+        //}
+        //public static float DataRefValueUnionToFloat(XPlanePluginIcd.DataRefValueUnion union)
+        //{
+        //    return union.FloatValue;
+        //}
+        //public static double DataRefValueUnionToDouble(XPlanePluginIcd.DataRefValueUnion union)
+        //{
+        //    return union.DoubleValue;
+        //}
     }
+
+    
+
 }
+
+

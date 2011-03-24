@@ -36,11 +36,9 @@ typedef struct XplaneQuery
 	char DataRefType;
 	char QueryType;
 	char ValueCount;
-	union{
-		int IntValue;
-		float FloatValue;
-		double DoubleValue;
-	} values[255];
+	int IntValues[255];
+	float FloatValues[255];
+	double DoubleValues[255];
 } QUERY;
 
 BOOL CreateSharedMemorySpace(void);
@@ -120,14 +118,14 @@ DWORD WINAPI HandleIncomingCommands(LPVOID lpParam)
 				switch(newCommand.DataRefType)
 				{
 				case INTVAL:
-					//XPLMGetDatavi(
-					response.values->IntValue = XPLMGetDatai(dataRef);
+					XPLMGetDatavi(dataRef, response.IntValues, 0, response.ValueCount);
+					//response.values->IntValue = XPLMGetDatai(dataRef);
 					break;
 				case FLOATVAL:
-					response.values->FloatValue = XPLMGetDataf(dataRef);
+					response.FloatValues[0] = XPLMGetDataf(dataRef);
 					break;
 				case DOUBLEVAL:
-					response.values->DoubleValue = XPLMGetDatad(dataRef);
+					response.DoubleValues[0] = XPLMGetDatad(dataRef);
 					break;
 				default: 
 					break;
@@ -139,13 +137,13 @@ DWORD WINAPI HandleIncomingCommands(LPVOID lpParam)
 				switch(newCommand.DataRefType)
 				{
 				case INTVAL:
-					XPLMSetDatai(XPLMFindDataRef(newCommand.DataRefName), newCommand.values->IntValue);
+					XPLMSetDatai(XPLMFindDataRef(newCommand.DataRefName), newCommand.IntValues[0]);
 					break;
 				case FLOATVAL:
-					XPLMSetDataf(XPLMFindDataRef(newCommand.DataRefName), newCommand.values->FloatValue);
+					XPLMSetDataf(XPLMFindDataRef(newCommand.DataRefName), newCommand.FloatValues[0]);
 					break;
 				case DOUBLEVAL:
-					XPLMSetDatad(XPLMFindDataRef(newCommand.DataRefName), newCommand.values->DoubleValue);
+					XPLMSetDatad(XPLMFindDataRef(newCommand.DataRefName), newCommand.DoubleValues[0]);
 					break;
 				default: 
 					break;
