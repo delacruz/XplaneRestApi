@@ -120,6 +120,7 @@ DWORD WINAPI HandleIncomingCommands(LPVOID lpParam)
 				switch(newCommand.DataRefType)
 				{
 				case INTVAL:
+					//XPLMGetDatavi(
 					response.values->IntValue = XPLMGetDatai(dataRef);
 					break;
 				case FLOATVAL:

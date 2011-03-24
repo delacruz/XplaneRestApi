@@ -19,6 +19,10 @@ namespace XplaneServices
         [WebGet(UriTemplate = "i?dataRef={dataRef}", ResponseFormat = WebMessageFormat.Json)]
         int ReadInt(string dataRef);
 
+        [OperationContract]
+        [WebGet(UriTemplate = "vi?dataRef={dataRef}&valueCount={valueCount}", ResponseFormat = WebMessageFormat.Json)]
+        int[] ReadInts(string dataRef);
+
         /// <summary>
         /// Reads the float.
         /// </summary>

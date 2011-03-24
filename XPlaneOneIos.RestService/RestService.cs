@@ -27,16 +27,18 @@ namespace XplaneServices
             Log.Info("Started Service.");
             var query = new XPlanePluginIcd.DynamicQuery
                             {
-                                DataRef = "my/data/ref/rocks",
-                                DataType = XPlanePluginIcd.DataRefDataType.FloatVal,
-                                QueryType = XPlanePluginIcd.XplaneQueryType.Response,
+                                DataRef = "sim/time/sim_speed",
+                                DataType = XPlanePluginIcd.DataRefDataType.IntVal,
+                                QueryType = XPlanePluginIcd.XplaneQueryType.Write,
                                 values = new XPlanePluginIcd.DataRefValueUnion
-                                               {
-                                                   IntValues = new int[255]
-                                               }
+                                             {
+                                                 IntValues = new int[255],
+                                                 FloatValues = new float[255],
+                                                 DoubleValue = new double[1]
+                                             }
                             };
 
-            query.values.IntValues[0] = 2147483647;
+            query.values.IntValues[0] = 1;
 
             _sharedMemoryCommand.Write(query);
         }
@@ -186,11 +188,11 @@ namespace XplaneServices
         {
             var query = new XPlanePluginIcd.DynamicQuery
                             {
-                                values = new XPlanePluginIcd.DataRefValueUnion
-                                             {
-                                                 IntValues = new int[255],
-                                                FloatValues = new float[255]
-                                             },
+                                //values = new XPlanePluginIcd.DataRefValueUnion
+                                //             {
+                                //                 IntValues = new int[255],
+                                //                FloatValues = new float[255]
+                                //             },
                                 DataRef = dataRef,
                                 DataType = dataRefDataType,
                                 QueryType = XPlanePluginIcd.XplaneQueryType.Write
