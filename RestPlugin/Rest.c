@@ -120,11 +120,9 @@ DWORD WINAPI HandleIncomingCommands(LPVOID lpParam)
 				{
 				case INTVAL:
 					XPLMGetDatavi(dataRef, response.IntValues, 0, response.ValueCount);
-					//response.values->IntValue = XPLMGetDatai(dataRef);
 					break;
 				case FLOATVAL:
 					XPLMGetDatavf(dataRef, response.FloatValues, 0, response.ValueCount);
-					//response.FloatValues[0] = XPLMGetDataf(dataRef);
 					break;
 				case DOUBLEVAL:
 					response.DoubleValues[0] = XPLMGetDatad(dataRef);
@@ -143,14 +141,15 @@ DWORD WINAPI HandleIncomingCommands(LPVOID lpParam)
 				{
 				case INTVAL:
 					XPLMSetDatavi(XPLMFindDataRef(newCommand.DataRefName), newCommand.IntValues, 0, newCommand.ValueCount);
-					//XPLMSetDatai(XPLMFindDataRef(newCommand.DataRefName), newCommand.IntValues[0]);
 					break;
 				case FLOATVAL:
 					XPLMSetDatavf(XPLMFindDataRef(newCommand.DataRefName), newCommand.FloatValues, 0, newCommand.ValueCount);
-					//XPLMSetDataf(XPLMFindDataRef(newCommand.DataRefName), newCommand.FloatValues[0]);
 					break;
 				case DOUBLEVAL:
 					XPLMSetDatad(XPLMFindDataRef(newCommand.DataRefName), newCommand.DoubleValues[0]);
+					break;
+				case CHARVAL:
+					XPLMSetDatab(XPLMFindDataRef(newCommand.DataRefName), newCommand.ByteValues, 0, newCommand.ValueCount);
 					break;
 				default: 
 					break;

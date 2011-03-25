@@ -103,5 +103,13 @@ namespace XplaneServices
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare)]
         void WriteDouble(string dataRef, double newValue);
+
+        [OperationContract]
+        [WebInvoke(UriTemplate = "s?dataRef={dataRef}",
+            Method = "PUT",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        void WriteString(string dataRef, string newValue);
     }
 }

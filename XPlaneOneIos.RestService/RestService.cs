@@ -27,21 +27,6 @@ namespace XplaneServices
         {
             _sharedMemoryResponse.DataReceived += SharedMemoryResponseDataReceived;
             Log.Info("Started Service.");
-            //var query = new XPlanePluginIcd.DynamicQuery
-            //                {
-            //                    DataRef = "sim/time/sim_speed",
-            //                    DataType = XPlanePluginIcd.DataRefDataType.IntVal,
-            //                    QueryType = XPlanePluginIcd.XplaneQueryType.Write,
-            //                    //Values = new XPlanePluginIcd.DataRefValueUnion[255]
-            //                    IntValues = new int[255],
-            //                    FloatValues = new float[255],
-            //                    DoubleValues = new double[255]
-            //                };
-
-            //query.IntValues[0] = 1;
-
-            //_sharedMemoryCommand.Write(query);
-
         }
 
         /// <summary>
@@ -64,12 +49,6 @@ namespace XplaneServices
                 DataType = dataRefDataType,
                 QueryType = XPlanePluginIcd.XplaneQueryType.Read,
                 ValueCount = (byte)valueCount,
-                //values = new XPlanePluginIcd.DataRefValueUnion
-                //             {
-                //                 IntValue = new int[255],
-                //                 //FloatValues = new float[255],
-                //                 //DoubleValues = new double[255]
-                //             }
             });
 
             var didRespond = _signal.WaitOne(2000);
@@ -111,8 +90,6 @@ namespace XplaneServices
         public int[] ReadInts(string dataRef, int valueCount)
         {
             return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.IntVal, valueCount);
-            //int[] valuesAsIntegers = Array.ConvertAll(unionValues, new Converter<XPlanePluginIcd.DataRefValueUnion, int>(DataRefValueUnionToInt));
-            //return valuesAsIntegers.Take(valueCount).ToArray();
         }
 
         /// <summary>
@@ -180,32 +157,6 @@ namespace XplaneServices
             WriteDataRef(dataRef, newValue, XPlanePluginIcd.DataRefDataType.DoubleVal, 1);
         }
 
-        /// <summary>
-        /// Reads the data ref.
-        /// </summary>
-        /// <param name="dataRef">The data ref.</param>
-        /// <returns></returns>
-        //public dynamic ReadDataRef(string dataRef)
-        //{
-        //    _sharedMemoryCommand.Write(new XPlanePluginIcd.DynamicQuery
-        //    {
-        //        DataRef = dataRef,
-        //        DataType = XPlanePluginIcd.DataRefDataType.IntVal,
-        //        QueryType = XPlanePluginIcd.XplaneQueryType.Read
-        //    });
-
-        //    var didRespond = _signal.WaitOne(2000);
-
-        //    if (didRespond)
-        //    {
-        //        return _response.IntValues;
-        //    }
-        //    else
-        //    {
-        //        return -999;
-        //    }
-        //}
-
         //TODO: ValueCount seem unncecessary, use newValue.Length instead?
         public void WriteDataRef(string dataRef, dynamic newValue, XPlanePluginIcd.DataRefDataType dataRefDataType, int valueCount)
         {
@@ -231,6 +182,9 @@ namespace XplaneServices
                 case XPlanePluginIcd.DataRefDataType.DoubleVal:
                     newValue.CopyTo(query.DoubleValues, 0);
                     break;
+                case XPlanePluginIcd.DataRefDataType.CharVal:
+                    query.ByteValues = newValue;
+                    break;
                 default:
                     throw new NotSupportedException();
                     break;
@@ -239,27 +193,16 @@ namespace XplaneServices
             _sharedMemoryCommand.Write(query);
         }
 
-        //public static int DataRefValueUnionToInt(XPlanePluginIcd.DataRefValueUnion union)
-        //{
-        //    return union.IntValue;
-        //}
-        //public static float DataRefValueUnionToFloat(XPlanePluginIcd.DataRefValueUnion union)
-        //{
-        //    return union.FloatValue;
-        //}
-        //public static double DataRefValueUnionToDouble(XPlanePluginIcd.DataRefValueUnion union)
-        //{
-        //    return union.DoubleValue;
-        //}
         public string ReadString(string dataRef, int valueCount)
         {
             return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.CharVal, valueCount);
         }
 
+        public void WriteString(string dataRef, string newValue)
+        {
+            WriteDataRef(dataRef, newValue, XPlanePluginIcd.DataRefDataType.CharVal, newValue.Length);
+        }
+
     }
 
-    
-
 }
-
-
