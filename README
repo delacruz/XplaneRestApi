@@ -1,7 +1,7 @@
 X-Plane XPLMDataAccess API Exposed as a RESTful Service.
 ==============================================
 
-The XPLMDataAccess API portion of the X-Plane SDK exposed as RESTful service.
+This plugin and service provide the ability to get and set x-plane variables via a RESTful service.  The purpose is to provide flexible interface into the X-Plane runtime environment without the complexity of having to recompile a plugin every time the user needs access to a new variable.  The plugin also eliminates the need to use the UDP interface, allowing the user to continue using a well known and documented interfaces via well-documented verbose string names, also known as data references or datarefs.
 
 For information on this plugin and service, please see the project's wiki @ http://github.com/delacruz/XplaneRestApi/wiki
 
