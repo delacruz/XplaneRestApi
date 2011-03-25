@@ -32,6 +32,10 @@ namespace XplaneServices
         [WebGet(UriTemplate = "f?dataRef={dataRef}", ResponseFormat = WebMessageFormat.Json)]
         float ReadFloat(string dataRef);
 
+        [OperationContract]
+        [WebGet(UriTemplate = "vf?dataRef={dataRef}&valueCount={valueCount}", ResponseFormat = WebMessageFormat.Json)]
+        float[] ReadFloats(string dataRef, int valueCount);
+
         /// <summary>
         /// Reads the double.
         /// </summary>
@@ -54,6 +58,14 @@ namespace XplaneServices
             BodyStyle = WebMessageBodyStyle.Bare)]
         void WriteInt(string dataRef, int newValue);
 
+        [OperationContract]
+        [WebInvoke(UriTemplate = "vi?dataRef={dataRef}",
+            Method = "PUT",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        void WriteInts(string dataRef, int[] newValue);
+
         /// <summary>
         /// Writes the float.
         /// </summary>
@@ -66,6 +78,14 @@ namespace XplaneServices
             ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare)]
         void WriteFloat(string dataRef, float newValue);
+
+        [OperationContract]
+        [WebInvoke(UriTemplate = "vf?dataRef={dataRef}",
+            Method = "PUT",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        void WriteFloats(string dataRef, float[] newValue);
 
         /// <summary>
         /// Writes the double.
