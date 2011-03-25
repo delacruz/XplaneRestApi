@@ -42,12 +42,13 @@ namespace XplaneServices
             public byte ValueCount;
             //[MarshalAs(UnmanagedType.ByValArray, SizeConst = 255)]
             //public DataRefValueUnion[] Values;
-
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 255)]
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 500)]
+            public string ByteValues;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
             public int[] IntValues;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 255)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
             public float[] FloatValues;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 255)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
             public double[] DoubleValues;
         }
 

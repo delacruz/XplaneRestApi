@@ -84,6 +84,9 @@ namespace XplaneServices
                         return _response.FloatValues.Take(valueCount).ToArray();
                     case XPlanePluginIcd.DataRefDataType.DoubleVal:
                         return _response.DoubleValues.Take(valueCount).ToArray();
+                    case XPlanePluginIcd.DataRefDataType.CharVal:
+                        return _response.ByteValues;
+                        break;
                     default:
                         break;
                 }
@@ -182,26 +185,26 @@ namespace XplaneServices
         /// </summary>
         /// <param name="dataRef">The data ref.</param>
         /// <returns></returns>
-        public dynamic ReadDataRef(string dataRef)
-        {
-            _sharedMemoryCommand.Write(new XPlanePluginIcd.DynamicQuery
-            {
-                DataRef = dataRef,
-                DataType = XPlanePluginIcd.DataRefDataType.IntVal,
-                QueryType = XPlanePluginIcd.XplaneQueryType.Read
-            });
+        //public dynamic ReadDataRef(string dataRef)
+        //{
+        //    _sharedMemoryCommand.Write(new XPlanePluginIcd.DynamicQuery
+        //    {
+        //        DataRef = dataRef,
+        //        DataType = XPlanePluginIcd.DataRefDataType.IntVal,
+        //        QueryType = XPlanePluginIcd.XplaneQueryType.Read
+        //    });
 
-            var didRespond = _signal.WaitOne(2000);
+        //    var didRespond = _signal.WaitOne(2000);
 
-            if (didRespond)
-            {
-                return _response.IntValues;
-            }
-            else
-            {
-                return -999;
-            }
-        }
+        //    if (didRespond)
+        //    {
+        //        return _response.IntValues;
+        //    }
+        //    else
+        //    {
+        //        return -999;
+        //    }
+        //}
 
         //TODO: ValueCount seem unncecessary, use newValue.Length instead?
         public void WriteDataRef(string dataRef, dynamic newValue, XPlanePluginIcd.DataRefDataType dataRefDataType, int valueCount)
@@ -212,9 +215,9 @@ namespace XplaneServices
                                 DataType = dataRefDataType,
                                 QueryType = XPlanePluginIcd.XplaneQueryType.Write,
                                 ValueCount = (byte)valueCount,
-                                IntValues = new int[255],
-                                FloatValues = new float[255],
-                                DoubleValues = new double[255]
+                                IntValues = new int[256],
+                                FloatValues = new float[256],
+                                DoubleValues = new double[256]
                             };
 
             switch (dataRefDataType)
@@ -248,6 +251,11 @@ namespace XplaneServices
         //{
         //    return union.DoubleValue;
         //}
+        public string ReadString(string dataRef, int valueCount)
+        {
+            return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.CharVal, valueCount);
+        }
+
     }
 
     

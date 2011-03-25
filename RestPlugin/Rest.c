@@ -36,9 +36,10 @@ typedef struct XplaneQuery
 	char DataRefType;
 	char QueryType;
 	char ValueCount;
-	int IntValues[255];
-	float FloatValues[255];
-	double DoubleValues[255];
+	char ByteValues[500];
+	int IntValues[256];
+	float FloatValues[256];
+	double DoubleValues[256];
 } QUERY;
 
 BOOL CreateSharedMemorySpace(void);
@@ -127,6 +128,9 @@ DWORD WINAPI HandleIncomingCommands(LPVOID lpParam)
 					break;
 				case DOUBLEVAL:
 					response.DoubleValues[0] = XPLMGetDatad(dataRef);
+					break;
+				case CHARVAL:
+					XPLMGetDatab(dataRef, response.ByteValues, 0, response.ValueCount);
 					break;
 				default: 
 					break;
