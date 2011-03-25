@@ -1,1 +1,8 @@
-The X-Plane SDK exposed as RESTful service.  Please see the wiki for additional information.
+X-Plane XPLMDataAccess API Exposed as a RESTful Service.
+==============================================
+
+The XPLMDataAccess API portion of the X-Plane SDK exposed as RESTful service.
+
+For information on this plugin and service, please see the project's wiki @ http://github.com/delacruz/XplaneRestApi/wiki
+
+For information on how to use the XPLMDataAccess API, please see the official X-Plane SDK entry on this topic @ http://www.xsquawkbox.net/xpsdk/mediawiki/XPLMDataAccess
