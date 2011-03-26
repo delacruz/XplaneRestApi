@@ -35,9 +35,11 @@ typedef struct XplaneQuery
 	char DataRefName[128];
 	char DataRefType;
 	char QueryType;
-	int IntValue;
-	float FloatValue;
-	double DoubleValue;
+	char ValueCount;
+	char ByteValues[500];
+	int IntValues[256];
+	float FloatValues[256];
+	double DoubleValues[256];
 } QUERY;
 
 BOOL CreateSharedMemorySpace(void);
@@ -117,13 +119,16 @@ DWORD WINAPI HandleIncomingCommands(LPVOID lpParam)
 				switch(newCommand.DataRefType)
 				{
 				case INTVAL:
-					response.IntValue = XPLMGetDatai(dataRef);
+					XPLMGetDatavi(dataRef, response.IntValues, 0, response.ValueCount);
 					break;
 				case FLOATVAL:
-					response.FloatValue = XPLMGetDataf(dataRef);
+					XPLMGetDatavf(dataRef, response.FloatValues, 0, response.ValueCount);
 					break;
 				case DOUBLEVAL:
-					response.DoubleValue = XPLMGetDatad(dataRef);
+					response.DoubleValues[0] = XPLMGetDatad(dataRef);
+					break;
+				case CHARVAL:
+					XPLMGetDatab(dataRef, response.ByteValues, 0, response.ValueCount);
 					break;
 				default: 
 					break;
@@ -135,13 +140,16 @@ DWORD WINAPI HandleIncomingCommands(LPVOID lpParam)
 				switch(newCommand.DataRefType)
 				{
 				case INTVAL:
-					XPLMSetDatai(XPLMFindDataRef(newCommand.DataRefName), newCommand.IntValue);
+					XPLMSetDatavi(XPLMFindDataRef(newCommand.DataRefName), newCommand.IntValues, 0, newCommand.ValueCount);
 					break;
 				case FLOATVAL:
-					XPLMSetDataf(XPLMFindDataRef(newCommand.DataRefName), newCommand.FloatValue);
+					XPLMSetDatavf(XPLMFindDataRef(newCommand.DataRefName), newCommand.FloatValues, 0, newCommand.ValueCount);
 					break;
 				case DOUBLEVAL:
-					XPLMSetDatad(XPLMFindDataRef(newCommand.DataRefName), newCommand.DoubleValue);
+					XPLMSetDatad(XPLMFindDataRef(newCommand.DataRefName), newCommand.DoubleValues[0]);
+					break;
+				case CHARVAL:
+					XPLMSetDatab(XPLMFindDataRef(newCommand.DataRefName), newCommand.ByteValues, 0, newCommand.ValueCount);
 					break;
 				default: 
 					break;
@@ -189,3 +197,4 @@ PLUGIN_API void	XPluginStop(void)
 	UnmapViewOfFile(gLpvCommandMem);
 	CloseHandle(gHMapObjectCommand);
 }             
+

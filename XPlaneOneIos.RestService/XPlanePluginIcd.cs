@@ -39,10 +39,17 @@ namespace XplaneServices
             public string DataRef;
             public DataRefDataType DataType;
             public XplaneQueryType QueryType;
-            public int IntValue;
-            public float FloatValue;
-            public double DoubleValue;
+            public byte ValueCount;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 500)]
+            public string ByteValues;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+            public int[] IntValues;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+            public float[] FloatValues;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+            public double[] DoubleValues;
         }
+
 
     }
 }
