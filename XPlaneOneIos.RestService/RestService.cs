@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using log4net;
 using XplaneServices.SharedMemory;
-using System.Linq;
 
 namespace XplaneServices
 {
@@ -64,17 +63,13 @@ namespace XplaneServices
                     case XPlanePluginIcd.DataRefDataType.DoubleVal:
                         return _response.DoubleValues.Take(valueCount).ToArray();
                     case XPlanePluginIcd.DataRefDataType.CharVal:
-                        return _response.ByteValues;
-                        break;
+                        return _response.TextValue;
                     default:
                         break;
                 }
                 return _response.IntValues[0];
             }
-            else
-            {
-                return new [] {-999};
-            }
+            return new [] {-999};
         }
 
         /// <summary>
@@ -84,7 +79,7 @@ namespace XplaneServices
         /// <returns>int value</returns>
         public int ReadInt(string dataRef)
         {
-            return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.IntVal, 1);
+            return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.IntVal, 1)[0];
         }
 
         /// <summary>
@@ -105,7 +100,7 @@ namespace XplaneServices
         /// <returns>float value</returns>
         public float ReadFloat(string dataRef)
         {
-            return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.FloatVal, 1);
+            return ReadData(dataRef, XPlanePluginIcd.DataRefDataType.FloatVal, 1)[0];
         }
 
         /// <summary>
@@ -136,7 +131,7 @@ namespace XplaneServices
         /// <param name="newValue">The new value.</param>
         public void WriteInt(string dataRef, int newValue)
         {
-            WriteDataRef(dataRef, newValue, XPlanePluginIcd.DataRefDataType.IntVal, 1);
+            WriteDataRef(dataRef, new[] { newValue }, XPlanePluginIcd.DataRefDataType.IntVal, 1, false);
         }
 
         /// <summary>
@@ -146,7 +141,7 @@ namespace XplaneServices
         /// <param name="newValues">The new values.</param>
         public void WriteInts(string dataRef, int[] newValues)
         {
-            WriteDataRef(dataRef, newValues, XPlanePluginIcd.DataRefDataType.IntVal, newValues.Length);
+            WriteDataRef(dataRef, newValues, XPlanePluginIcd.DataRefDataType.IntVal, newValues.Length, true);
         }
 
         /// <summary>
@@ -156,7 +151,7 @@ namespace XplaneServices
         /// <param name="newValue">The new value.</param>
         public void WriteFloat(string dataRef, float newValue)
         {
-            WriteDataRef(dataRef, newValue, XPlanePluginIcd.DataRefDataType.FloatVal, 1);
+            WriteDataRef(dataRef, new[] { newValue }, XPlanePluginIcd.DataRefDataType.FloatVal, 1, false);
         }
 
         /// <summary>
@@ -166,7 +161,7 @@ namespace XplaneServices
         /// <param name="newValues">The new values.</param>
         public void WriteFloats(string dataRef, float[] newValues)
         {
-            WriteDataRef(dataRef, newValues, XPlanePluginIcd.DataRefDataType.FloatVal, newValues.Length);
+            WriteDataRef(dataRef, newValues, XPlanePluginIcd.DataRefDataType.FloatVal, newValues.Length, true);
         }
 
         /// <summary>
@@ -176,18 +171,12 @@ namespace XplaneServices
         /// <param name="newValue">The new value.</param>
         public void WriteDouble(string dataRef, double newValue)
         {
-            WriteDataRef(dataRef, newValue, XPlanePluginIcd.DataRefDataType.DoubleVal, 1);
+            WriteDataRef(dataRef, new[] { newValue }, XPlanePluginIcd.DataRefDataType.DoubleVal, 1, false);
         }
 
         //TODO: ValueCount seem unncecessary, use newValue.Length instead?
-        /// <summary>
-        /// Writes the data ref.
-        /// </summary>
-        /// <param name="dataRef">The data ref.</param>
-        /// <param name="newValue">The new value.</param>
-        /// <param name="dataRefDataType">Type of the data ref data.</param>
-        /// <param name="valueCount">The value count.</param>
-        public void WriteDataRef(string dataRef, dynamic newValue, XPlanePluginIcd.DataRefDataType dataRefDataType, int valueCount)
+        //TODO: Move to XPLANE Enumartion for value types asap, this is DIRTY!
+        public void WriteDataRef(string dataRef, dynamic newValue, XPlanePluginIcd.DataRefDataType dataRefDataType, int valueCount, bool treatAsArray)
         {
             var query = new XPlanePluginIcd.DynamicQuery
                             {
@@ -195,6 +184,7 @@ namespace XplaneServices
                                 DataType = dataRefDataType,
                                 QueryType = XPlanePluginIcd.XplaneQueryType.Write,
                                 ValueCount = (byte)valueCount,
+                                TreatAsArray = treatAsArray,
                                 IntValues = new int[256],
                                 FloatValues = new float[256],
                                 DoubleValues = new double[256]
@@ -212,11 +202,10 @@ namespace XplaneServices
                     newValue.CopyTo(query.DoubleValues, 0);
                     break;
                 case XPlanePluginIcd.DataRefDataType.CharVal:
-                    query.ByteValues = newValue;
+                    query.TextValue = newValue;
                     break;
                 default:
                     throw new NotSupportedException();
-                    break;
             }
 
             _sharedMemoryCommand.Write(query);
@@ -240,7 +229,7 @@ namespace XplaneServices
         /// <param name="newValue">The new value.</param>
         public void WriteString(string dataRef, string newValue)
         {
-            WriteDataRef(dataRef, newValue, XPlanePluginIcd.DataRefDataType.CharVal, newValue.Length);
+            WriteDataRef(dataRef, newValue, XPlanePluginIcd.DataRefDataType.CharVal, newValue.Length, true);
         }
     }
 }

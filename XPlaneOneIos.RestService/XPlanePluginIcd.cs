@@ -40,8 +40,10 @@ namespace XplaneServices
             public DataRefDataType DataType;
             public XplaneQueryType QueryType;
             public byte ValueCount;
+            [MarshalAs(UnmanagedType.Bool)]
+            public bool TreatAsArray;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 500)]
-            public string ByteValues;
+            public string TextValue;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
             public int[] IntValues;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]

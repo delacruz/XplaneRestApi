@@ -36,6 +36,7 @@ typedef struct XplaneQuery
 	char DataRefType;
 	char QueryType;
 	char ValueCount;
+	BOOL TreatAsArray;
 	char ByteValues[500];
 	int IntValues[256];
 	float FloatValues[256];
@@ -93,6 +94,8 @@ BOOL CreateSharedMemorySpace()
 	// Init shared mem to 0
 	memset(gLpvCommandMem, '\0', SharedMemorySizeCommand);
 	memset(gLpvReplyMem, '\0', SharedMemorySizeReply);
+
+	return TRUE;
 }
 
 DWORD WINAPI HandleIncomingCommands(LPVOID lpParam)
@@ -110,19 +113,25 @@ DWORD WINAPI HandleIncomingCommands(LPVOID lpParam)
 			QUERY newCommand;
 			ResetEvent(gHNewCommandEvent);
 			memcpy(&newCommand, gLpvCommandMem, sizeof(QUERY));
-			
+			dataRef = XPLMFindDataRef(newCommand.DataRefName);
+
 			switch(newCommand.QueryType)
 			{
 			case QUERYREAD:
-				response = newCommand;
-				dataRef = XPLMFindDataRef(newCommand.DataRefName);
+				response = newCommand;				
 				switch(newCommand.DataRefType)
 				{
 				case INTVAL:
-					XPLMGetDatavi(dataRef, response.IntValues, 0, response.ValueCount);
+					if(response.ValueCount > 1)
+						XPLMGetDatavi(dataRef, response.IntValues, 0, response.ValueCount);
+					else
+						response.IntValues[0] = XPLMGetDatai(dataRef);
 					break;
 				case FLOATVAL:
-					XPLMGetDatavf(dataRef, response.FloatValues, 0, response.ValueCount);
+					if(response.ValueCount > 1)
+						XPLMGetDatavf(dataRef, response.FloatValues, 0, response.ValueCount);
+					else
+						response.FloatValues[0] = XPLMGetDataf(dataRef);
 					break;
 				case DOUBLEVAL:
 					response.DoubleValues[0] = XPLMGetDatad(dataRef);
@@ -140,16 +149,22 @@ DWORD WINAPI HandleIncomingCommands(LPVOID lpParam)
 				switch(newCommand.DataRefType)
 				{
 				case INTVAL:
-					XPLMSetDatavi(XPLMFindDataRef(newCommand.DataRefName), newCommand.IntValues, 0, newCommand.ValueCount);
+					if(newCommand.TreatAsArray)
+						XPLMSetDatavi(dataRef, newCommand.IntValues, 0, newCommand.ValueCount);
+					else
+						XPLMSetDatai(dataRef, newCommand.IntValues[0]);
 					break;
 				case FLOATVAL:
-					XPLMSetDatavf(XPLMFindDataRef(newCommand.DataRefName), newCommand.FloatValues, 0, newCommand.ValueCount);
+					if(newCommand.TreatAsArray)
+						XPLMSetDatavf(dataRef, newCommand.FloatValues, 0, newCommand.ValueCount);
+					else
+						XPLMSetDataf(dataRef, newCommand.FloatValues[0]);
 					break;
 				case DOUBLEVAL:
-					XPLMSetDatad(XPLMFindDataRef(newCommand.DataRefName), newCommand.DoubleValues[0]);
+					XPLMSetDatad(dataRef, newCommand.DoubleValues[0]);
 					break;
 				case CHARVAL:
-					XPLMSetDatab(XPLMFindDataRef(newCommand.DataRefName), newCommand.ByteValues, 0, newCommand.ValueCount);
+					XPLMSetDatab(dataRef, newCommand.ByteValues, 0, newCommand.ValueCount);
 					break;
 				default: 
 					break;
@@ -166,6 +181,7 @@ DWORD WINAPI HandleIncomingCommands(LPVOID lpParam)
 			
 		}
 	}
+	return 1;
 }
 
 PLUGIN_API int XPluginStart(
