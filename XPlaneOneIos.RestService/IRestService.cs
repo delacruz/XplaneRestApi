@@ -19,10 +19,22 @@ namespace XplaneServices
         [WebGet(UriTemplate = "i?dataRef={dataRef}", ResponseFormat = WebMessageFormat.Json)]
         int ReadInt(string dataRef);
 
+        /// <summary>
+        /// Reads the string.
+        /// </summary>
+        /// <param name="dataRef">The data ref.</param>
+        /// <param name="valueCount">The value count.</param>
+        /// <returns></returns>
         [OperationContract]
         [WebGet(UriTemplate = "s?dataRef={dataRef}&valueCount={valueCount}", ResponseFormat = WebMessageFormat.Json)]
         string ReadString(string dataRef, int valueCount);
 
+        /// <summary>
+        /// Reads the ints.
+        /// </summary>
+        /// <param name="dataRef">The data ref.</param>
+        /// <param name="valueCount">The value count.</param>
+        /// <returns></returns>
         [OperationContract]
         [WebGet(UriTemplate = "vi?dataRef={dataRef}&valueCount={valueCount}", ResponseFormat = WebMessageFormat.Json)]
         int[] ReadInts(string dataRef, int valueCount);
@@ -36,6 +48,12 @@ namespace XplaneServices
         [WebGet(UriTemplate = "f?dataRef={dataRef}", ResponseFormat = WebMessageFormat.Json)]
         float ReadFloat(string dataRef);
 
+        /// <summary>
+        /// Reads the floats.
+        /// </summary>
+        /// <param name="dataRef">The data ref.</param>
+        /// <param name="valueCount">The value count.</param>
+        /// <returns></returns>
         [OperationContract]
         [WebGet(UriTemplate = "vf?dataRef={dataRef}&valueCount={valueCount}", ResponseFormat = WebMessageFormat.Json)]
         float[] ReadFloats(string dataRef, int valueCount);
@@ -62,6 +80,11 @@ namespace XplaneServices
             BodyStyle = WebMessageBodyStyle.Bare)]
         void WriteInt(string dataRef, int newValue);
 
+        /// <summary>
+        /// Writes the ints.
+        /// </summary>
+        /// <param name="dataRef">The data ref.</param>
+        /// <param name="newValue">The new value.</param>
         [OperationContract]
         [WebInvoke(UriTemplate = "vi?dataRef={dataRef}",
             Method = "PUT",
@@ -83,6 +106,11 @@ namespace XplaneServices
             BodyStyle = WebMessageBodyStyle.Bare)]
         void WriteFloat(string dataRef, float newValue);
 
+        /// <summary>
+        /// Writes the floats.
+        /// </summary>
+        /// <param name="dataRef">The data ref.</param>
+        /// <param name="newValue">The new value.</param>
         [OperationContract]
         [WebInvoke(UriTemplate = "vf?dataRef={dataRef}",
             Method = "PUT",
@@ -104,6 +132,11 @@ namespace XplaneServices
             BodyStyle = WebMessageBodyStyle.Bare)]
         void WriteDouble(string dataRef, double newValue);
 
+        /// <summary>
+        /// Writes the string.
+        /// </summary>
+        /// <param name="dataRef">The data ref.</param>
+        /// <param name="newValue">The new value.</param>
         [OperationContract]
         [WebInvoke(UriTemplate = "s?dataRef={dataRef}",
             Method = "PUT",
