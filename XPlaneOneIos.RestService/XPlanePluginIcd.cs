@@ -1,5 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 
+
+
 namespace XplaneServices
 {
     /// <summary>
@@ -8,15 +10,26 @@ namespace XplaneServices
     public static class XPlanePluginIcd
     {
 
-        /// <summary>
-        /// The type being passed
-        /// </summary>
+        ///// <summary>
+        ///// The type being passed
+        ///// </summary>
+        //public enum DataRefDataType : byte
+        //{
+        //    IntVal,
+        //    FloatVal,
+        //    DoubleVal,
+        //    CharVal
+        //}
+
         public enum DataRefDataType : byte
         {
-            IntVal,
-            FloatVal,
-            DoubleVal,
-            CharVal
+            XplmTypeUnknown = 0x00,
+            XplmTypeInt = 0x01,
+            XplmTypeFloat = 0x02,
+            XplmTypeDouble = 0x04,
+            XplmTypeFloatArray = 0x08,
+            XplmTypeIntArray = 0x10,
+            XplmTypeData = 0x20
         }
 
         /// <summary>

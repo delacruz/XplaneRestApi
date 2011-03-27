@@ -21,10 +21,12 @@ static DWORD gDWCommandThreadId = NULL;
 
 static BOOL gExitThreads = FALSE;
 
-#define INTVAL		0x00
-#define FLOATVAL	0x01
-#define DOUBLEVAL	0x02
-#define CHARVAL		0x03
+//#define INTVAL		0x00
+//#define FLOATVAL	0x01
+//#define DOUBLEVAL	0x02
+//#define CHARVAL		0x03
+//
+
 
 #define QUERYREAD		0x00
 #define QUERYWRITE		0x01
@@ -36,7 +38,6 @@ typedef struct XplaneQuery
 	char DataRefType;
 	char QueryType;
 	char ValueCount;
-	BOOL TreatAsArray;
 	char ByteValues[500];
 	int IntValues[256];
 	float FloatValues[256];
@@ -121,22 +122,22 @@ DWORD WINAPI HandleIncomingCommands(LPVOID lpParam)
 				response = newCommand;				
 				switch(newCommand.DataRefType)
 				{
-				case INTVAL:
-					if(response.ValueCount > 1)
+				case xplmType_Int:
+					response.IntValues[0] = XPLMGetDatai(dataRef);
+					break;
+				case xplmType_IntArray:
 						XPLMGetDatavi(dataRef, response.IntValues, 0, response.ValueCount);
-					else
-						response.IntValues[0] = XPLMGetDatai(dataRef);
+						break;
+				case xplmType_Float:
+					response.FloatValues[0] = XPLMGetDataf(dataRef);
 					break;
-				case FLOATVAL:
-					if(response.ValueCount > 1)
+				case xplmType_FloatArray:
 						XPLMGetDatavf(dataRef, response.FloatValues, 0, response.ValueCount);
-					else
-						response.FloatValues[0] = XPLMGetDataf(dataRef);
 					break;
-				case DOUBLEVAL:
+				case xplmType_Double:
 					response.DoubleValues[0] = XPLMGetDatad(dataRef);
 					break;
-				case CHARVAL:
+				case xplmType_Data:
 					XPLMGetDatab(dataRef, response.ByteValues, 0, response.ValueCount);
 					break;
 				default: 
@@ -148,22 +149,22 @@ DWORD WINAPI HandleIncomingCommands(LPVOID lpParam)
 			case QUERYWRITE:
 				switch(newCommand.DataRefType)
 				{
-				case INTVAL:
-					if(newCommand.TreatAsArray)
-						XPLMSetDatavi(dataRef, newCommand.IntValues, 0, newCommand.ValueCount);
-					else
-						XPLMSetDatai(dataRef, newCommand.IntValues[0]);
+				case xplmType_Int:
+					XPLMSetDatai(dataRef, newCommand.IntValues[0]);
 					break;
-				case FLOATVAL:
-					if(newCommand.TreatAsArray)
-						XPLMSetDatavf(dataRef, newCommand.FloatValues, 0, newCommand.ValueCount);
-					else
-						XPLMSetDataf(dataRef, newCommand.FloatValues[0]);
+				case xplmType_IntArray:
+					XPLMSetDatavi(dataRef, newCommand.IntValues, 0, newCommand.ValueCount);
 					break;
-				case DOUBLEVAL:
+				case xplmType_Float:
+					XPLMSetDataf(dataRef, newCommand.FloatValues[0]);
+					break;
+				case xplmType_FloatArray:
+					XPLMSetDatavf(dataRef, newCommand.FloatValues, 0, newCommand.ValueCount);
+					break;
+				case xplmType_Double:
 					XPLMSetDatad(dataRef, newCommand.DoubleValues[0]);
 					break;
-				case CHARVAL:
+				case xplmType_Data:
 					XPLMSetDatab(dataRef, newCommand.ByteValues, 0, newCommand.ValueCount);
 					break;
 				default: 
