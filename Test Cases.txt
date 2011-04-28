@@ -1,0 +1,22 @@
+sim/cockpit/gyros/the_ele_ind_deg   float
+http://localhost:8732/Design_Time_Addresses/XplaneServices/RestService/f?dataRef=sim/cockpit/gyros/the_vac_ind_deg
+
+sim/flightmodel/position/latitude    double
+http://localhost:8732/Design_Time_Addresses/XplaneServices/RestService/d?dataRef=sim/flightmodel/position/latitude
+
+sim/time/sim_speed    int
+http://localhost:8732/Design_Time_Addresses/XplaneServices/RestService/i?dataRef=sim/time/sim_speed
+
+
+http://localhost:8732/Design_Time_Addresses/XplaneServices/RestService/i?sim/weather/cloud_type[0]
+http://localhost:8732/Design_Time_Addresses/XplaneServices/RestService/f?dataref=sim/weather/cloud_base_msl_m[0]
+http://localhost:8732/Design_Time_Addresses/XplaneServices/RestService/f?dataref=sim/weather/rain_percent
+http://localhost:8732/Design_Time_Addresses/XplaneServices/RestService/f?dataref=sim/weather/thunderstorm_percent
+
+sim/multiplayer/controls/engine_throttle_request
+
+http://localhost:8732/Design_Time_Addresses/XplaneServices/RestService/vf?dataRef=sim/flightmodel/engine/ENGN_thro&valueCount=2
+http://localhost:8732/Design_Time_Addresses/XplaneServices/RestService/vi?dataRef=sim/cockpit/electrical/generator_on&valueCount=2
+http://localhost:8732/Design_Time_Addresses/XplaneServices/RestService/vf?dataRef=sim/cockpit2/engine/actuators/throttle_ratio&valueCount=2
+
+http://localhost:8732/Design_Time_Addresses/XplaneServices/RestService/s?dataRef=sim/aircraft/view/acf_tailnum&valueCount=40
